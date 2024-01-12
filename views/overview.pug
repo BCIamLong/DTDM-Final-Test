@@ -1,0 +1,56 @@
+//- * then we will go to the overview(or other view) page and extend base template
+extends base
+
+//- * so what's exactly we extend from base template
+//- * well it's entire base template, header, footer... and we will only manipulate with block content and change it with overview page content
+//- * and with this feature we do not include header, footer... not change part in all the other page because it's not clean, take a lot code, hard to maintain ...  right
+//- * what we only do that's related only this content of this page so it's very nice feature
+//- * we can also custom many block, like if we define block in head element we can also custom it
+block content 
+  //- * then we will custom this block content with overview page content
+  //- h1= title 
+  main.main 
+    .card-container
+      //- * so pug support iteration to loop array and we can easy to use that's each keyword
+      //- * https://pugjs.org/language/iteration.html
+      each tour in tours
+        //- !remember the template which is loop must inside each command, means it needs indent 1 tab
+        .card 
+          .card__header 
+            .card__picture 
+              .card__picture-overlay 
+                //- * with attribute in () we do not use =  and #{} to use with JS code because it expects a string and to do that we will use ES6 literal template string ``
+                img.card__picture-img(src=`img/tours/${tour.imageCover}` alt=`${tour.name}`)
+            h3.heading-tertirary
+              span= tour.name
+          .card__details 
+            h4.card__sub-heading #{tour.difficulty} #{tour.duration}-day tour
+            p.card__text= tour.summary
+            .card__data 
+              svg.card__icon 
+                use(xlink:href="img/icons.svg#icon-map-pin")
+              span= tour.startLocation.description
+            .card__data 
+              svg.card__icon 
+                use(xlink:href="img/icons.svg#icon-calendar")
+              - const date = new Date(tour.startDates[0].date)
+              //- span #{date.getMonth()} #{date.getFullYear()}
+              span= tour.startDates[0].date.toLocaleString('default', {month: 'long', year: 'numeric'})
+            .card__data 
+              svg.card__icon 
+                use(xlink:href="img/icons.svg#icon-flag")
+              span #{tour.locations.length} stops
+            .card__data 
+              svg.card__icon 
+                use(xlink:href="img/icons.svg#icon-user")
+              span #{tour.maxGroupSize} people
+          .card__footer 
+            p 
+              span.card__footer-value $#{tour.price} 
+              //- * this is a trick to add the space between element in pug which is called pipe tip, what we will do is add | notation and then add spaceS
+              //- | 
+              span.card__footer-text per person 
+            p.card__ratings 
+              span.card__footer-value #{tour.ratingAverage}
+              span.card__footer-text rating (#{tour.ratingsQuantity})
+            a.btn.btn--green.btn--small(href = `/tours/${tour.slug}`) Details
